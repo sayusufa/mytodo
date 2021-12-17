@@ -1,0 +1,107 @@
+{% extends 'mytodo/base.html' %}
+
+{% block content %}
+    <section class="section">
+        {% if messages %}
+            {% for message in messages %}
+                <article class="message is-success">
+                    <div class="message-header">
+                        <p>Nice!</p>
+                    </div>
+                    <div class="message-body">
+                        {{ message }}
+                    </div>
+                </article>
+            {% endfor %}
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            {% for non_field_error in form.non_field_errors %}
+                <p class="help is-danger">{{ non_field_error }}</p>
+            {% endfor %}
+            {% for field in form %}
+                <div class="field">
+                    <label for="{{ field.id_for_label }}" class="label">{{ field.label }}</label>
+                    {{ field }}
+                {% for error in field.errors %}
+                    <p class="help is-danger">{{ error }}</p>
+                {% endfor %}
+                </div>
+            {% endfor %}
+            <div class="control">
+                <button type="submit" class=" is-small button is-dark is-light">Submit</button>
+            </div>
+        </form>
+    </section>
+    <hr>
+    <section class="section">
+        <table class="table is-hoverable is-fullwidth">
+            {% if tasks %}
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Added On</th>
+                        <th>Due Date</th>
+                        <th>Due In</th>
+                        <th>Due Time</th>
+                        <th>Executed</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+            {% endif %}
+            {% for task in tasks %}
+                <tr>
+                    <td>
+                        {% if task.is_executed == True %}
+                            <span style="text-decoration: line-through">{{ task.task }}</span>
+                        {% else %}
+                            {{ task.task }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ task.day_added|date}}
+                    </td>
+                    <td>
+                        {{ task.Date|date }}
+                    </td>
+                    <td>
+                        {{ task.Date|timeuntil }}
+                    </td>
+                    <td>
+                            {{ task.time_todo}}
+                    </td>
+                    <td>
+                        {% if task.is_executed == True %}
+                            <i class="far fa-check-circle"></i>
+                            <a class="has-text-dark" href="{% url 'unexecuted' task.id %}">Mark unexecuted</a>
+                        {% else %}
+                            <i class="far fa-circle"></i>
+                            <a class="has-text-dark" href="{% url 'executed' task.id %}">Mark executed</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="button is-dark is-small">
+                            <a class="has-text-light" href="{% url 'edit' task.id %}">Edit Task</a>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="button is-dark is-light is-small">
+                            <a class="has-text-light" href="{% url 'delete' task.id %}">Delete Task</a>
+                        </button>
+                    </td>
+                </tr>
+            {% empty %}
+                <p>You do not have any todo yet...</p>
+            {% endfor %}
+        </table>
+        {% if num > 1%}
+            <hr>
+            <div class="box has-text-centered">
+                <button class="button is-danger is-dark is-small is-center">
+                    <a class="has-text-light" href="{% url 'warn_user_deleting_all' %}">Clear All Tasks</a>
+                </button>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

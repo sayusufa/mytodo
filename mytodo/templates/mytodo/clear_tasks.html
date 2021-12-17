@@ -1,0 +1,16 @@
+{% extends 'mytodo/base.html' %}
+
+{% block content %}
+    <section class="section">
+        <div class="box has-text-centered">
+            <p>Are you sure you want to clear all tasks?</p>
+            <hr>
+            <button class="button is-dark is-small">
+                <a class="has-text-light" href="{% url 'home_page' %}">No</a>
+            </button>
+            <button class="button is-dark is-small">
+                <a class="has-text-light" href="{% url 'delete_all' %}">Yes</a>
+            </button>
+        </div>
+    </section>
+{% endblock %}
